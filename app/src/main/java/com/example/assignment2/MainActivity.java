@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +28,7 @@ import java.io.IOException;
 
 public class MainActivity extends ActionBarActivity {
     final String APIKEY = "https://api.mongolab.com/api/1/databases/testdatabase/collections/assignment2?apiKey=A5kVWSH3bgxQl6_qgr3NyZSdvAzZXrwH";
-
+    private JSONArray savedArray;
 
 
     @Override
@@ -64,12 +66,51 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    public void updateFields() {
+        LinearLayout temp = (LinearLayout)findViewById(R.id.contentLayout);
+        temp.removeAllViews();
+
+        try {
+            for(int i = 0; i < savedArray.length(); i++) {
+                TextView tempText = new TextView(MainActivity.this);
+
+                JSONObject obj = savedArray.getJSONObject(i);
+                Log.d("MSG", obj.toString());
+
+                String first = obj.getString("first_name");
+                Log.d("MSG", "FIRST NAME: " + first);
+
+                String last = obj.getString("last_name");
+                //Log.d("MSG", obj.toString());
+                Log.d("MSG", "LAST NAME: " + last);
+
+                String email_address = obj.getString("email_address");
+                //Log.d("MSG", obj.toString());
+                Log.d("MSG", "EMAIL: " + email_address);
+
+                String student_number = obj.getString("student_number");
+                //Log.d("MSG", obj.toString());
+                Log.d("MSG", "EMAIL: " + student_number);
+
+                tempText.setText(first + " " + last + " " + email_address + " " + student_number);
+                temp.addView(tempText);
+            }
+        } catch(JSONException e) {
+
+        }
+
+
+
+
+
+    }
+
     private class pullData extends AsyncTask<String, Integer, Long> {
         private String first;
         private String last;
         private String email_address;
         private String student_number;
-        private JSONArray savedArray;
+
 
         @Override
         protected Long doInBackground(String... params) {
@@ -161,7 +202,7 @@ public class MainActivity extends ActionBarActivity {
                     //first = obj.getString("first_name");
                 }
 
-
+            updateFields();
 
             } catch(JSONException e) {
 
