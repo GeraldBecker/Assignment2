@@ -36,6 +36,23 @@
 
 
     </ScrollView>
-
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/storeInfoButton"
+        android:text="STore Data"
+        android:onClick="storeData"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/getInfoButton3"
+        android:text="Display Data"
+        android:onClick="displayData"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/deleteButton"
+        android:text="Delete all Data"
+        android:onClick="deleteAllData"/>
 
 </LinearLayout>

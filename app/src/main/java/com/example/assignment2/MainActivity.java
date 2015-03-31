@@ -1,5 +1,7 @@
 package com.example.assignment2;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -29,12 +31,13 @@ import java.io.IOException;
 public class MainActivity extends ActionBarActivity {
     final String APIKEY = "https://api.mongolab.com/api/1/databases/testdatabase/collections/assignment2?apiKey=A5kVWSH3bgxQl6_qgr3NyZSdvAzZXrwH";
     private JSONArray savedArray;
-
+    SQLiteHelper help;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        help = new SQLiteHelper(this);
     }
 
 
@@ -70,6 +73,8 @@ public class MainActivity extends ActionBarActivity {
         LinearLayout temp = (LinearLayout)findViewById(R.id.contentLayout);
         temp.removeAllViews();
 
+
+
         try {
             for(int i = 0; i < savedArray.length(); i++) {
                 TextView tempText = new TextView(MainActivity.this);
@@ -94,6 +99,8 @@ public class MainActivity extends ActionBarActivity {
 
                 tempText.setText(first + " " + last + " " + email_address + " " + student_number);
                 temp.addView(tempText);
+
+                help.putInformation(help, first, last);
             }
         } catch(JSONException e) {
 
@@ -103,6 +110,30 @@ public class MainActivity extends ActionBarActivity {
 
 
 
+    }
+
+    public void storeData(final View v) {
+        help.putInformation(help, "GERALD", "BECKER");
+    }
+
+    public void displayData(final View v) {
+        Cursor CR = help.getInformation(help);
+        if(!CR.moveToFirst()) {
+            Toast.makeText(getApplicationContext(), "NO MORE LEFT", Toast.LENGTH_LONG).show();
+            return;
+        }
+        do {
+            String first = CR.getString(0);
+            String last = CR.getString(1);
+
+            Toast.makeText(getApplicationContext(), first + " " + last, Toast.LENGTH_SHORT).show();
+
+        } while(CR.moveToNext());
+    }
+
+    public void deleteAllData(final View v) {
+        help.deleteAll(help);
+        //getApplicationContext().deleteDatabase(SQLiteHelper.TABLE_NAME);
     }
 
     private class pullData extends AsyncTask<String, Integer, Long> {
