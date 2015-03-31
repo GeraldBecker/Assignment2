@@ -5,7 +5,7 @@ package com.example.assignment2;
  */
 public class Profile {
     private long id;
-    private String comment;
+    private String firstname;
 
     public long getId()
     {
@@ -17,14 +17,14 @@ public class Profile {
         id = i;
     }
 
-    public String getComment()
+    public String getFirstname()
     {
-        return (comment);
+        return (firstname);
     }
 
     public void setProfile(final String c)
     {
-        comment = c;
+        firstname = c;
     }
 
     // Will be used by the ArrayAdapter in the ListView
@@ -34,6 +34,6 @@ public class Profile {
     @Override
     public String toString()
     {
-        return comment;
+        return firstname;
     }
 }

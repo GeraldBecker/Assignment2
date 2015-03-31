@@ -22,6 +22,7 @@ public class DataSource {
                 {
                         SQLiteHelper.COLUMN_ID,
                         SQLiteHelper.COLUMN_FIRSTNAME,
+                        SQLiteHelper.COLUMN_LASTNAME,
                 };
     }
 
@@ -40,7 +41,7 @@ public class DataSource {
         dbHelper.close();
     }
 
-    public Profile createProfile(String comment)
+    public Profile createProfile(String first, String last)
     {
         final ContentValues values;
         final long          insertId;
@@ -48,13 +49,10 @@ public class DataSource {
         final Profile       newProfile;
 
         values = new ContentValues();
-        values.put(SQLiteHelper.COLUMN_FIRSTNAME, comment);
-        insertId = database.insert(SQLiteHelper.COLUMN_FIRSTNAME,
-                null,
-                values);
-        cursor = database.query(SQLiteHelper.COLUMN_FIRSTNAME,
-                allColumns,
-                SQLiteHelper.COLUMN_ID + " = " + insertId,
+        values.put(SQLiteHelper.COLUMN_FIRSTNAME, first);
+        values.put(SQLiteHelper.COLUMN_LASTNAME, last);
+        insertId = database.insert(SQLiteHelper.TABLE_NAME, null, values);
+        cursor = database.query(SQLiteHelper.TABLE_NAME, allColumns, SQLiteHelper.COLUMN_ID + " = " + insertId,
                 null,
                 null,
                 null,
@@ -72,7 +70,7 @@ public class DataSource {
 
         id = comment.getId();
         System.out.println("Profile deleted with id: " + id);
-        database.delete(SQLiteHelper.COLUMN_FIRSTNAME,
+        database.delete(SQLiteHelper.TABLE_NAME,
                 SQLiteHelper.COLUMN_ID + " = " + id,
                 null);
     }
@@ -83,7 +81,7 @@ public class DataSource {
         final Cursor cursor;
 
         comments = new ArrayList<Profile>();
-        cursor   = database.query(SQLiteHelper.COLUMN_FIRSTNAME,
+        cursor   = database.query(SQLiteHelper.TABLE_NAME,
                 allColumns,
                 null,
                 null,
