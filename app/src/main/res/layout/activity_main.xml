@@ -8,6 +8,64 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="API Key: "
+                android:textSize="20sp"
+                />
+
+            <EditText android:id="@+id/apiKey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="100"
+                android:hint=""/>
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Database name: "
+                android:textSize="20sp"
+                />
+            <EditText android:id="@+id/dbName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint=""/>
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Collection name: "
+                android:textSize="20sp"
+                />
+            <EditText android:id="@+id/colName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint=""/>
+        </TableRow>
+
+
+    </TableLayout>
+
+
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,37 +80,39 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/contentLayout"
             android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="HAHAHA"
-                android:textSize="25sp"
-                android:textColor="#000000"/>
+                android:id="@+id/contentLayout"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HAHAHA"
+                    android:textSize="25sp"
+                    android:textColor="#000000"/>
 
 
+            </LinearLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/getInfoButton3"
+                android:text="Display Data"
+                android:onClick="toastData"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/deleteButton"
+                android:text="Delete all Data"
+                android:onClick="deleteAllData"/>
         </LinearLayout>
 
 
+
     </ScrollView>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/storeInfoButton"
-        android:text="STore Data"
-        android:onClick="storeData"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/getInfoButton3"
-        android:text="Display Data"
-        android:onClick="displayData"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/deleteButton"
-        android:text="Delete all Data"
-        android:onClick="deleteAllData"/>
+
 
 </LinearLayout>

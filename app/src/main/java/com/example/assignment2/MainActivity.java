@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -29,7 +30,16 @@ import java.io.IOException;
 
 
 public class MainActivity extends ActionBarActivity {
-    final String APIKEY = "https://api.mongolab.com/api/1/databases/testdatabase/collections/assignment2?apiKey=A5kVWSH3bgxQl6_qgr3NyZSdvAzZXrwH";
+    //private String APIKEY = "https://api.mongolab.com/api/1/databases/testdatabase/collections/assignment2?apiKey=A5kVWSH3bgxQl6_qgr3NyZSdvAzZXrwH";
+    private String URL = "https://api.mongolab.com/api/1/databases/";
+    private String DATABASE = "testdatabase";
+    private String URL2 = "/collections/";
+    private String COLLECTION = "assignment2";
+    private String URL3 = "?apiKey=";
+    private String APIKEY = "A5kVWSH3bgxQl6_qgr3NyZSdvAzZXrwH";
+    private String fullURL;
+
+
     private JSONArray savedArray;
     SQLiteHelper help;
 
@@ -38,6 +48,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         help = new SQLiteHelper(this);
+        updateFieldsSQLite();
+        fullURL = URL + DATABASE + URL2 + COLLECTION + URL3 + APIKEY;
     }
 
 
@@ -63,60 +75,50 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
     public void getData(final View v) {
-        Log.d("MSG", "button clicked");
+        String database = ((EditText)findViewById(R.id.dbName)).getText().toString();
+        String collection = ((EditText)findViewById(R.id.colName)).getText().toString();
+        String apikey = ((EditText)findViewById(R.id.apiKey)).getText().toString();
+
+        if(!(database.equals("") && collection.equals("") && apikey.equals(""))) {
+
+            fullURL = URL + database + URL2 + collection + URL3 + apikey;
+
+        }
+            Log.d("MSG", fullURL+"|");
+
+        fullURL.trim();
+
         Toast.makeText(getApplicationContext(), "PULLING DATA" , Toast.LENGTH_LONG).show();
         new pullData().execute("hi");
 
     }
 
-    public void updateFields() {
+
+    public void updateFieldsSQLite() {
         LinearLayout temp = (LinearLayout)findViewById(R.id.contentLayout);
         temp.removeAllViews();
 
-
-
-        try {
-            for(int i = 0; i < savedArray.length(); i++) {
-                TextView tempText = new TextView(MainActivity.this);
-
-                JSONObject obj = savedArray.getJSONObject(i);
-                Log.d("MSG", obj.toString());
-
-                String first = obj.getString("first_name");
-                Log.d("MSG", "FIRST NAME: " + first);
-
-                String last = obj.getString("last_name");
-                //Log.d("MSG", obj.toString());
-                Log.d("MSG", "LAST NAME: " + last);
-
-                String email_address = obj.getString("email_address");
-                //Log.d("MSG", obj.toString());
-                Log.d("MSG", "EMAIL: " + email_address);
-
-                String student_number = obj.getString("student_number");
-                //Log.d("MSG", obj.toString());
-                Log.d("MSG", "EMAIL: " + student_number);
-
-                tempText.setText(first + " " + last + " " + email_address + " " + student_number);
-                temp.addView(tempText);
-
-                help.putInformation(help, first, last);
-            }
-        } catch(JSONException e) {
-
+        Cursor CR = help.getInformation(help);
+        if(!CR.moveToFirst()) {
+            Toast.makeText(getApplicationContext(), "NO MORE LEFT", Toast.LENGTH_LONG).show();
+            return;
         }
+        do {
+            String first = CR.getString(0);
+            String last = CR.getString(1);
+            String email_address = CR.getString(2);
+            String student_number = CR.getString(3);
 
-
-
+            TextView tempText = new TextView(MainActivity.this);
+            tempText.setText(first + " " + last + " " + email_address + " " + student_number);
+            temp.addView(tempText);
+        } while(CR.moveToNext());
 
 
     }
 
-    public void storeData(final View v) {
-        help.putInformation(help, "GERALD", "BECKER");
-    }
 
-    public void displayData(final View v) {
+    public void toastData(final View v) {
         Cursor CR = help.getInformation(help);
         if(!CR.moveToFirst()) {
             Toast.makeText(getApplicationContext(), "NO MORE LEFT", Toast.LENGTH_LONG).show();
@@ -133,24 +135,19 @@ public class MainActivity extends ActionBarActivity {
 
     public void deleteAllData(final View v) {
         help.deleteAll(help);
-        //getApplicationContext().deleteDatabase(SQLiteHelper.TABLE_NAME);
+        updateFieldsSQLite();
     }
 
     private class pullData extends AsyncTask<String, Integer, Long> {
-        private String first;
-        private String last;
-        private String email_address;
-        private String student_number;
-
-
         @Override
         protected Long doInBackground(String... params) {
             Log.d("MSG", "STARTING DO IN BACKGROUND");
             HttpClient client = new DefaultHttpClient();
-            HttpGet myGet = new HttpGet(APIKEY);
+            HttpGet myGet = new HttpGet(fullURL);
 
             HttpResponse response;
 
+            savedArray = new JSONArray();
             try {
                 response = client.execute(myGet);
 
@@ -159,52 +156,9 @@ public class MainActivity extends ActionBarActivity {
 
                 Log.d("MSG", "Got the response");
 
-
-
                 String entityResponse = EntityUtils.toString(entity);
 
-                //JSONObject jObject = new JSONObject(entityResponse);
-
-                JSONArray responseArray = new JSONArray(entityResponse);
-                savedArray = responseArray;
-
-                Log.d("MSG", "Array: " + responseArray.toString());
-                JSONObject obj = responseArray.getJSONObject(0);
-
-
-                Log.d("MSG", obj.toString());
-
-                first = obj.getString("first_name");
-                Log.d("MSG", "FIRST NAME: " + first);
-
-                last = obj.getString("last_name");
-                //Log.d("MSG", obj.toString());
-                Log.d("MSG", "LAST NAME: " + last);
-
-                email_address = obj.getString("email_address");
-                //Log.d("MSG", obj.toString());
-                Log.d("MSG", "EMAIL: " + email_address);
-
-                student_number = obj.getString("student_number");
-                //Log.d("MSG", obj.toString());
-                Log.d("MSG", "EMAIL: " + student_number);
-
-                /*
-                WHEN THE DATABASE HAS THE NAMES IN A NAME OBJECT, USE THE BELOW CODE
-
-                JSONArray responseArray = new JSONArray(entityResponse);
-                Log.d("MSG", "Array: " + responseArray.toString());
-                JSONObject obj = responseArray.getJSONObject(2);
-
-                JSONObject customerObj = obj.getJSONObject("customer");
-                String first = customerObj.getString("firstname");
-                Log.d("MSG", customerObj.toString());
-                Log.d("MSG", "RESPONSE: " + first);
-
-                 */
-
-
-
+                savedArray = new JSONArray(entityResponse);
 
             } catch (ClientProtocolException e) {
                 Log.d("MSG", "response error caught");
@@ -212,11 +166,7 @@ public class MainActivity extends ActionBarActivity {
                 Log.d("MSG", "IO error caught");
             } catch(JSONException e) {
                 Log.d("MSG", "JSON Exception: " + e.getMessage());
-            } finally {
             }
-
-
-            Log.d("MSG", "Got the object I guess");
 
             return null;
         }
@@ -224,30 +174,30 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(Long aLong) {
             super.onPostExecute(aLong);
+            //clear the previously saved records on the SQLite database
+            help.deleteAll(help);
+
             Log.d("MSG", "----------PRINTING OUT RECORDS----------------");
             try {
                 for(int i = 0; i < savedArray.length(); i++) {
                     JSONObject obj = savedArray.getJSONObject(i);
                     Log.d("MSG", obj.toString());
+                    String first = obj.getString("first_name");
+                    String last = obj.getString("last_name");
+                    String email_address = obj.getString("email_address");
+                    String student_number = obj.getString("student_number");
 
-                    //first = obj.getString("first_name");
+                    help.putInformation(help, first, last, email_address, student_number);
+
                 }
 
-            updateFields();
+                updateFieldsSQLite();
 
             } catch(JSONException e) {
-
+                Log.d("MSG", "JSON Exception: " + e.getMessage());
+            } catch(NullPointerException e) {
+                Toast.makeText(getApplicationContext(), "NOT A VALID DATABASE", Toast.LENGTH_LONG).show();
             }
-
-
-
-
-
-
-            //TextView firstField = (TextView)findViewById(R.id.textAnswerFirst);
-            //firstField.setText(first);
-            //TextView lastField = (TextView)findViewById(R.id.textAnswerLast);
-            //lastField.setText(last);
         }
     }
 }

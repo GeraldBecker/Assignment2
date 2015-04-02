@@ -22,7 +22,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_CREATE;
 
     static {
-        TABLE_NAME = "profile";
+        TABLE_NAME = "profile3";
         COLUMN_ID        = "_id";
         COLUMN_FIRSTNAME = "first_name";
         COLUMN_LASTNAME = "last_name";
@@ -32,9 +32,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         DATABASE_VERSION = 1;
         DATABASE_CREATE  = "create table " +
                 TABLE_NAME + "(" + COLUMN_ID +
-                " integer primary key autoincrement, " + COLUMN_FIRSTNAME +
-                " text not null, " + COLUMN_LASTNAME +
-                " text not null)";
+                " integer primary key autoincrement, " +
+                COLUMN_FIRSTNAME + " text not null, " +
+                COLUMN_LASTNAME + " text not null,"+
+                COLUMN_EMAIL + " text not null,"+
+                COLUMN_STUDENTNUMBER + " text not null)";
 
     }
     public SQLiteHelper(final Context context) {
@@ -62,18 +64,20 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void putInformation(SQLiteHelper dop, String first, String last) {
+    public void putInformation(SQLiteHelper dop, String first, String last, String email, String studentNum) {
         SQLiteDatabase SQ = dop.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_FIRSTNAME, first);
         cv.put(COLUMN_LASTNAME, last);
+        cv.put(COLUMN_EMAIL, email);
+        cv.put(COLUMN_STUDENTNUMBER, studentNum);
         long k = SQ.insert(TABLE_NAME, null, cv);
         Log.d("DATABASE", "INSERTED");
     }
 
     public Cursor getInformation(SQLiteHelper dop) {
         SQLiteDatabase SQ = dop.getReadableDatabase();
-        String[] columns = {COLUMN_FIRSTNAME, COLUMN_LASTNAME};
+        String[] columns = {COLUMN_FIRSTNAME, COLUMN_LASTNAME, COLUMN_EMAIL, COLUMN_STUDENTNUMBER};
         Cursor CR = SQ.query(TABLE_NAME, columns, null, null, null, null, null);
         return CR;
 
